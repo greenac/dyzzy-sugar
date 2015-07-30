@@ -6,6 +6,8 @@ var countDiffWeight = .5;
 var loneCountWeight = countDiffWeight/4;
 var nullScore = .5*loneCountWeight;
 var currentDate = new Date();
+var secondsInDay = 1000*60*60*24;
+var dateScaler = 36;
 
 exports.getScore = function(emailData) {
     var sum = 0;
@@ -21,20 +23,20 @@ exports.getScore = function(emailData) {
 var processCountDiff = function(sent, received) {
     var total = sent + received;
     var diff = math.abs(sent - received);
-    var score = .5*(math.pow(math.e, -math.pow(diff/2, 2)) + sent/total + received/total);
+    var gauss = .3*math.pow(math.e, -math.pow(diff/2, 2));
+    var count = .7*math.atan(total)/math.pi;
+    var score = count + gauss;
     return countDiffWeight*score;
 };
 
 var processLoneCounts = function(score) {
-    if (score == 0) {
-        return 0;
-    }
-
-    return 2*loneCountWeight*math.atan(score)/math.pi;
+    var score = 2*math.atan(score)/math.pi;
+    return loneCountWeight*score;
 };
 
 var processDates = function (dateString) {
     var processDate = new Date(dateString);
-    var diff = math.abs(currentDate.getDay() - processDate.getDay());
-    return loneCountWeight*math.pow(math.e, -diff/2);
+    var diff = math.abs(currentDate - processDate)/secondsInDay;
+    var score = (2/math.pi)*(math.pi/2 - math.atan(diff/dateScaler));
+    return loneCountWeight*score;
 };
