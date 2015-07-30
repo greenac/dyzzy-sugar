@@ -25,7 +25,7 @@ var processCountDiff = function(sent, received) {
     var diff = math.abs(sent - received);
     var gauss = .3*math.pow(math.e, -math.pow(diff/2, 2));
     var count = .7*math.atan(total)/math.pi;
-    var score = count + gauss;
+    var score = .5*(count + gauss);
     return countDiffWeight*score;
 };
 
