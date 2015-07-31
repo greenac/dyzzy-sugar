@@ -10,8 +10,7 @@ var secondsInDay = 1000*60*60*24;
 var dateScaler = 36;
 
 exports.getScore = function(emailData) {
-    var sum = 0;
-    sum += processCountDiff(emailData.sentCount, emailData.receivedCount);
+    var sum = processCountDiff(emailData.sentCount, emailData.receivedCount);
     sum += emailData.ccSentCount === 0 ? nullScore : processLoneCounts(emailData.ccSentCount);
     sum += emailData.lastSentEmail ? processDates(emailData.lastSentEmail) : nullScore;
     sum += emailData.lastCCEmail ? processDates(emailData.lastCCEmail) : nullScore;
@@ -25,12 +24,12 @@ var processCountDiff = function(sent, received) {
     var diff = math.abs(sent - received);
     var gauss = .3*math.pow(math.e, -math.pow(diff/2, 2));
     var count = .7*math.atan(total)/math.pi;
-    var score = .5*(count + gauss);
+    var score = count + gauss;
     return countDiffWeight*score;
 };
 
-var processLoneCounts = function(score) {
-    var score = 2*math.atan(score)/math.pi;
+var processLoneCounts = function(count) {
+    var score = 2*math.atan(count)/math.pi;
     return loneCountWeight*score;
 };
 
